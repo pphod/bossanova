@@ -85,7 +85,7 @@ class AdapterPhpmailer implements MailService
 
     public function addAttachment($path, $name)
     {
-        $this->instance->AddAttachment($path, $name);
+        $this->instance->addAttachment($path, $name);
     }
 
     public function setDebug($value = false)
