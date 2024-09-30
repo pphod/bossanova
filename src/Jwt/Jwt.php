@@ -9,25 +9,49 @@ class Jwt extends \stdClass
     /**
      * @var string $key - This defines the key of the cookie with the JWT if is used.
      */
-    private $key = 'bossanova';
+    private $key = null;
 
     /**
      * @var string $signature - This is the signature string for your JWT's
      */
-    private $signature = BOSSANOVA_JWT_SECRET;
+    private $signature = null;
 
     /**
      * Authentication controls
      */
-    final public function __construct($jwtKey = null, $signature = null)
+    final public function __construct($jwtKey = null, $signature = null, $samesite = null)
     {
         // Set custom key
         if (isset($jwtKey) && $jwtKey) {
             $this->key = $jwtKey;
+        } else {
+            if (defined('JWT_NAME')) {
+                $this->key = JWT_NAME;
+            } else {
+                $this->key = 'bossanova';
+            }
         }
+
         // Signature
         if (isset($signature) && $signature) {
             $this->signature = $signature;
+        } else {
+            if (defined('JWT_SECRET')) {
+                $this->signature = JWT_SECRET;
+            } else if (defined('BOSSANOVA_JWT_SECRET')) {
+                $this->signature = BOSSANOVA_JWT_SECRET;
+            }
+        }
+
+        // Samesite
+        if (isset($samesite) && $samesite) {
+            $this->samesite = $samesite;
+        } else {
+            if (defined('JWT_SAMESITE')) {
+                $this->samesite = JWT_SAMESITE;
+            } else {
+                $this->samesite = 'Lax';
+            }
         }
 
         // Must be defined in your config.php
@@ -145,7 +169,7 @@ class Jwt extends \stdClass
             'domain' => '',
             'secure' => true,
             'httponly' => false,
-            'samesite' => 'Lax'
+            'samesite' => $this->samesite
         ]);
 
         return $token;
@@ -159,7 +183,7 @@ class Jwt extends \stdClass
             'domain' => '',
             'secure' => true,
             'httponly' => false,
-            'samesite' => 'Lax'
+            'samesite' => $this->samesite
         ]);
     }
 
